@@ -1,17 +1,23 @@
+import { updateUser } from "@/app/lib/actions";
+import { fetchSingleUser } from "@/app/lib/data";
 import styles from "@/app/ui/dashboard/users/singleUser/singleUser.module.css";
 import Image from "next/image";
 
-function SingleUserPage() {
+async function SingleUserPage({params}) {
+
+  const {id} = params;
+  const user = await fetchSingleUser(id)
   return (
     <div className={styles.container}>
       <div className={styles.infoContainer}>
         <div className={styles.imageContainer}>
-          <Image src="/noavatar.png" alt="" fill />
+          <Image src={user.img || "/noavatar.png"} alt="" fill />
         </div>
-        John Doe
+        {user.username}
       </div>
       <div className={styles.formContainer}>
-        <form className={styles.form}>
+        <form className={styles.form} action={updateUser}>
+          <input type="hidden" name="id" value={user.id}  />
           <label>Username</label>
           <input type="text" name="username" placeholder="John Doe" />
           <label>Email</label>
@@ -24,13 +30,13 @@ function SingleUserPage() {
           <textarea type="text" name="address" />
           <label>is Admin?</label>
           <select name="isAdmin" id="isAdmin">
-            <option value={true}>Yes</option>
-            <option value={false}>No</option>
+            <option value={true} selected={user.isAdmin}>Yes</option>
+            <option value={false} selected={!user.isAdmin}>No</option>
           </select>
           <label>is Active?</label>
           <select name="isActive" id="isActive">
-            <option value={true}>Yes</option>
-            <option value={false}>No</option>
+            <option value={true} selected={user.isActive}>Yes</option>
+            <option value={false} selected={!user.isActive}>No</option>
           </select>
           <button>Update</button>
         </form>
